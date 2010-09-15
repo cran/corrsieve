@@ -222,7 +222,11 @@ summarise.lnPD <- function(input) {
 	return(lnPD)
 }
 summarize.lnPD <- function(input) {return(summarise.lnPD(input))}
-summarise.Fst <- function(input) {
+summarise.Fst <- function(input, stdevopt = 1) {
+	if (stdevopt == 3) {
+		cat("\n", "Enter raw data file path", "\n")
+		filepath <- scan(n=1, what = "character", quiet = TRUE)
+	}
 	Fst <- "NULL"
 	sdmeans <- c()
 	meansds <- c()
@@ -239,6 +243,52 @@ summarise.Fst <- function(input) {
 		tmp <- matrix(data, ncol = i, byrow = TRUE)
 		means <- c()
 		sds <- c()
+		if (stdevopt == 2) {
+			for (kc in 1:nrow(tmp)){
+				tmp2 <- t(tmp[kc,1:ncol(tmp)])
+				tmp2 <- tmp2[order(tmp2[1,])]
+				tmp[kc] <- tmp2
+			}
+		}
+		if (stdevopt == 3 && i > 1) {
+			options(warn = -9)
+			files <- list.files(path = filepath, pattern = "_f$")
+			Qmatrices <- "NULL"
+			Kfiles <- c()
+			for (fil in files) {
+				lin <- paste(filepath, fil, sep = "")
+				x <- readLines(lin)
+				K <- x[c(grep("populations assumed", as.character(x), perl = TRUE))]
+				K <- as.numeric(substring(K, 4, nchar(K)-20))
+				if (i == K) {Kfiles <- c(Kfiles, lin)}
+			}
+			for (fil in Kfiles) {
+				Qmatrix <- c()
+				x <- readLines(fil)
+				Qmat <- x[c(grep(" : ", as.character(x), perl = TRUE))]
+				Qmat <- Qmat[c(grep("cluster", as.character(Qmat), invert = TRUE, perl = TRUE))]
+				Qmat <- Qmat[c(grep("Locus", as.character(Qmat), invert = TRUE, perl = TRUE))]
+				for (l in 1:i) {
+					beg <- nchar(Qmat)-6
+					Qmat2 <- as.numeric(substring(Qmat, beg, beg+5))
+					Qmat <- substring(Qmat, 1, beg)
+					Qmatrix <- c(Qmatrix, Qmat2)	
+				}
+				Qmatrix <- matrix(Qmatrix, nrow = i, byrow = TRUE)
+				Qmatrix <- t(Qmatrix)
+				if (is(Qmatrices, "character")) {Qmatrices <- Qmatrix} else {Qmatrices <- cbind(Qmatrices, Qmatrix)}
+			}
+			Qmatrices <- data.frame(Qmatrices)
+			corr <- cor(Qmatrices[,1:ncol(Qmatrices)], Qmatrices[,1:ncol(Qmatrices)])
+			for (jy in 2:length(Kfiles)) {
+				xa <- (jy-1)*i +1
+				xb <- jy*i
+				rmat <- matrix(corr[1,xa:xb], ncol = i, byrow = TRUE)
+				tmp2 <- tmp[jy,]
+				tmp2 <- tmp2[order(rmat[1,]*-1)]
+				tmp[jy,] <- tmp2
+			}
+		}
 		for (j in 1:i) {
 			means <- c(means, mean(tmp[,j]))
 			sds <- c(sds, sd(tmp[,j]))
@@ -274,7 +324,7 @@ summarise.Fst <- function(input) {
 	Fst <- data.frame(Fst)
 	return(Fst)
 }
-summarize.Fst <- function(input) {return(summarise.Fst(input))}
+summarize.Fst <- function(input, stdevopt = 1) {return(summarise.Fst(input, stdevopt))}
 calc.delta <- function(input, Fst = FALSE) {
 	flag <- FALSE
 	for (i in min(input$K:(max(input$K)-1))) {
