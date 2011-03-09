@@ -3,7 +3,7 @@
 \alias{corr.Qmatrix}
 \title{Corr.Qmatrix}
 \description{Calculates Q matrix correlations from structure files in the folder specified in the filepath option}
-\usage{corr.Qmatrix(filepath = ".", rowncol = TRUE, avmax = TRUE, pvalue = FALSE, raw = TRUE, r = 0.99, p = 0.05)}
+\usage{corr.Qmatrix(filepath = "./", rowncol = TRUE, avmax = TRUE, pvalue = FALSE, raw = TRUE, r = 0.99, p = 0.05)}
 \arguments{
 	\item{filepath}{a character string listing the folder's path from the current directory}
 	\item{rowncol}{when TRUE, calculates and returns filtered Q matrix correlations using the rows-and-columns criterion}

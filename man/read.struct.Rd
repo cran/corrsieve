@@ -3,7 +3,7 @@
 \alias{read.struct}
 \title{Read.struct}
 \description{Reads the K values, Fsts, lnPDs from structure files in the folder specified in the filepath option}
-\usage{read.struct(filepath = ".")}
+\usage{read.struct(filepath = "./")}
 \arguments{
 	\item{filepath}{a character string listing the folder's path from the current directory}
 }

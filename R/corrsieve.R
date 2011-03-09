@@ -23,7 +23,7 @@ QmatrixFilt <- function(rowncol = list(""), avmaxcorr = as.table(matrix(NA)), ra
 	res@rawcorr <- rawcorr
 	return(res)
 }
-read.struct <- function(filepath = ".") {
+read.struct <- function(filepath = "./") {
 	options(warn = -9)
 	files <- list.files(path = filepath, pattern = "_f$")
 	maxK <- 1
@@ -66,7 +66,7 @@ read.struct <- function(filepath = ".") {
 	data <- data[order(data$K),]
 	return(data)
 }
-corr.Qmatrix <- function(filepath  = ".", rowncol = TRUE, avmax = TRUE, pvalue = FALSE, raw = TRUE, r = 0.99, p = 0.05) {
+corr.Qmatrix <- function(filepath  = "./", rowncol = TRUE, avmax = TRUE, pvalue = FALSE, raw = TRUE, r = 0.99, p = 0.05) {
 	options(warn = -9)
 	files <- list.files(path = filepath, pattern = "_f$")
 	maxK <- 1
@@ -327,7 +327,7 @@ summarise.Fst <- function(input, stdevopt = 1) {
 summarize.Fst <- function(input, stdevopt = 1) {return(summarise.Fst(input, stdevopt))}
 calc.delta <- function(input, Fst = FALSE) {
 	flag <- FALSE
-	for (i in min(input$K:(max(input$K)-1))) {
+	for (i in min(input$K):(max(input$K)-1)) {
 		if (i+1 != input$K[i+1]) {flag <- TRUE}
 	}
 	if (flag == TRUE) {print("Discontinuous data. Cannot process.")} else {
