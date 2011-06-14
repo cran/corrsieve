@@ -110,36 +110,34 @@ corr.Qmatrix <- function(filepath  = "./", rowncol = TRUE, avmax = TRUE, pvalue 
 	rawmatrix <- c()
 	avmaxcorr <- c()
 	rowcolALL <- c()
-	for (i in 1:maxK) {
-		start <- 1
-		end <- 0
-		for (j in 0:(i-1)) {
-			start <- start + (NoColK[i] * j)
-			end <- end + (NoColK[i] * (j+1))
-		}
-		corr <- cor(Qmatrices[,start:end], Qmatrices[,start:end])
-		if (pvalue == TRUE) {
-			sub <- Qmatrices[,start:end]
-			len  <- i * NoColK[i]
-			pvar <- c()
-			for (j in 1:len) {
-				xt <- c(sub[,j])
-				for (k in 1:len) {
-					yt <- c(sub[,k])
-					ptmp <- cor.test(xt, yt, method = "pearson")
-					pvar <- c(pvar, ptmp$p.value)
-				}
-			}
-			pvar <- matrix(pvar, ncol = len, byrow = TRUE)
-		}
+	rowcolcorr <- c()
+	end <- 0
+	for (i in 1:maxK) {	
+		start <- end + 1
+		end <- end + (NoColK[i] * i)
 		if (NoColK[i] > 1) {
+			corr <- cor(Qmatrices[,start:end], Qmatrices[,start:end])
+			if (pvalue == TRUE) {
+				sub <- Qmatrices[,start:end]
+                        len  <- i * NoColK[i]
+                        pvar <- c()
+                        for (j in 1:len) {
+                                xt <- c(sub[,j])
+                                for (k in 1:len) {
+                                        yt <- c(sub[,k])
+                                        ptmp <- cor.test(xt, yt, method = "pearson")
+                                        pvar <- c(pvar, ptmp$p.value)
+                                }
+                        }
+                        pvar <- matrix(pvar, ncol = len, byrow = TRUE)
+			}
 			maxcorr <- c()
 			rowcolcorr <- c()
 			for (j in 1:NoColK[i]) {
-				ya <- (j-1)*i +1
+				ya <- (j-1)*i + 1
 				yb <- j*i
 				min <- j+1
-				if (min < NoColK[1] + 1) {
+				if (min < NoColK[i] + 1) {
 					for (k in min:NoColK[i]) {
 						xa <- (k-1)*i+1
 						xb <- k*i
@@ -174,30 +172,34 @@ corr.Qmatrix <- function(filepath  = "./", rowncol = TRUE, avmax = TRUE, pvalue 
 				}
 			}
 			if (rowncol == TRUE) {
-				if (NoColK[i] < 2) {rowcolcorr <- table(NA)} else {
+				if (NoColK[i] > 2) {
 					for (z in 1:(NoColK[i]-2)) {
 						ca <- rowcolcorr[1:(NoColK[i]*z-z)]
 						for (y in 1:z) {ca <- c(ca, NA)}
 						rowcolcorr <- c(ca, rowcolcorr[(NoColK[i]*z-z + 1):length(rowcolcorr)])
 					}
-					rowcolcorr <- as.table(matrix(rowcolcorr, ncol = (NoColK[i] - 1), byrow =TRUE))
-					rownames(rowcolcorr) <- c(2:NoColK[i])
-					colnames(rowcolcorr) <- c(1:(NoColK[i]-1))
 				}
+				rowcolcorr <- as.table(matrix(rowcolcorr, ncol = (NoColK[i] - 1), byrow = TRUE))
+				rownames(rowcolcorr) <- c(2:NoColK[i])
+				colnames(rowcolcorr) <- c(1:(NoColK[i]-1))
 				rowcolcorr <- rowncolMatrix(K = i, filtermatrix = rowcolcorr)
 				rowcolALL <- c(rowcolALL, rowcolcorr)
-			} 
-			avmaxcorr <- c(avmaxcorr, mean(maxcorr))	
-		}else {avmaxcorr <- c(avmaxcorr, NA)}
+			}
+			avmaxcorr <- c(avmaxcorr, mean(maxcorr))
+		}else {
+			avmaxcorr <- c(avmaxcorr, NA)
+			rowcolcorr <- c(rowcolcorr, table(NA))
+			}
 	}
 	results <- QmatrixFilt()
 	if (avmax == TRUE) {
-		avmaxfilter <- c(NA)
-		for (i in 2:maxK){
-			if (class(avmaxcorr[i]) == "logical") {avmaxfilter <- c(avmaxfilter, NA)} else { 
-				if (avmaxcorr[i] < r) {avmaxfilter <- c(avmaxfilter, "N")} else {avmaxfilter <- c(avmaxfilter, "Y")}
-			}		
-		}
+		avmaxfilter <- c()
+		for (i in 1:maxK){
+			if (is.na(avmaxcorr[i]) == TRUE) 
+				{avmaxfilter <- c(avmaxfilter, NA)}
+			else	
+				{if (avmaxcorr[i] < r) {avmaxfilter <- c(avmaxfilter, "N")} else {avmaxfilter <- c(avmaxfilter, "Y")}}			
+		}	
 		avmaxcorr <- rbind(c(1:maxK),avmaxcorr,avmaxfilter)
 		avmaxcorr <- as.table(matrix(avmaxcorr, nrow = 3, byrow = FALSE))
 		rownames(avmaxcorr) <- c("K", "Average Max Corr", "Significantly Correlated")
