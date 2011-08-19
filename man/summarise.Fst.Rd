@@ -11,7 +11,7 @@
 		1: no optimisation, 2: order the clusters by value, 3: order the clusters by correlation coefficients}
 }
 \value{Returns a table listing K values and summarised Fst statistics}
-\author{Michael G. Campana <mgc32@cam.ac.uk>}
+\author{Michael G. Campana <mcampana63@gmail.com>}
 \seealso{
 	\code{\link{read.struct}}
 	\code{link{calc.delta}}

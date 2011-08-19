@@ -14,7 +14,7 @@ Objects can be created by calls of the form \code{new("matrixCorr", ...)}.
 	\item{CorrMatrix}{A matrix listing raw Q matrix correlations}
 	\item{Pvalues}{A matrix listing raw Q matrix correlation significances}
 }}
-\author{Michael G. Campana <mgc32@cam.ac.uk>}
+\author{Michael G. Campana <mcampana63@gmail.com>}
 \seealso{
 	\code{\link{matrixCorr}} 
 }

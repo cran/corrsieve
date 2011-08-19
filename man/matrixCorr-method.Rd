@@ -12,7 +12,7 @@
 	\item{Pvalues}{A matrix corresponding to the @Pvalues slot listing raw Q matrix correlation significances}
 }
 \value{Returns a S4 object of class matrixCorr listing raw Q matrix correlation results}
-\author{Michael G. Campana <mgc32@cam.ac.uk>}
+\author{Michael G. Campana <mcampana63@gmail.com>}
 \seealso{\code{\link[=matrixCorr-class]{matrixCorr}}}
 \examples{test <- matrixCorr(K = 1, Run1 = 2, Run2 = 3, CorrMatrix = matrix(NA))}
 \keyword{Q matrix}

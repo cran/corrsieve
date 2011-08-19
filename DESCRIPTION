@@ -1,6 +1,6 @@
 Package: corrsieve
-Version: 1.6-4
-Date: 2011/06/14
+Version: 1.6-5
+Date: 2011/08/19
 Title: CorrSieve
 Author: Michael G. Campana <mcampana63@gmail.com>
 Maintainer: Michael G. Campana <mcampana63@gmail.com>
@@ -12,6 +12,6 @@ URL:
 Cite: Campana et al. 2011. CorrSieve: software for summarising and
         evaluating STRUCTURE output. Mol Ecol Resources 11. 349-352.
 BugReports: <mcampana63@gmail.com>
-Packaged: 2011-06-14 06:06:25 UTC; michael
+Packaged: 2011-08-23 03:19:15 UTC; michael
 Repository: CRAN
-Date/Publication: 2011-06-15 18:00:01
+Date/Publication: 2011-08-23 20:02:52

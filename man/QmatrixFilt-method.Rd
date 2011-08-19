@@ -10,7 +10,7 @@
 	\item{rawcorr}{A list corresponding to the @rawcorr slot listing raw Q matrix correlations}
 }
 \value{Returns a S4 object of class QmatrixFilt listing Q matrix correlation results}
-\author{Michael G. Campana <mgc32@cam.ac.uk>}
+\author{Michael G. Campana <mcampana63@gmail.com>}
 \seealso{\code{\link[=QmatrixFilt-class]{QmatrixFilt}}}
 \examples{test <- QmatrixFilt(rowncol = list(c("a", "b", "c")))
 test@rowncol}

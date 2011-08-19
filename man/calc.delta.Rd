@@ -9,7 +9,7 @@
 	\item{Fst}{when FALSE, data is lnPD data and calculates delta K. When true, data is Fst data and calculates delta Fst}
 }
 \value{Returns a table listing K values and delta F or delta K statistics}
-\author{Michael G. Campana <mgc32@cam.ac.uk>}
+\author{Michael G. Campana <mcampana63@gmail.com>}
 \seealso{
 	\code{\link{summarise.Fst}}
 	\code{\link{summarise.lnPD}}

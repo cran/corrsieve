@@ -23,24 +23,33 @@ QmatrixFilt <- function(rowncol = list(""), avmaxcorr = as.table(matrix(NA)), ra
 	res@rawcorr <- rawcorr
 	return(res)
 }
-read.struct <- function(filepath = "./") {
+read.struct <- function(filepath = "./", instruct = FALSE) {
 	options(warn = -9)
 	files <- list.files(path = filepath, pattern = "_f$")
 	maxK <- 1
 	for (i in files) {
 		lin <- paste(filepath, i, sep = "")
 		x <- readLines(lin)
-		K <- x[c(grep("populations assumed", as.character(x), perl = TRUE))]
-		K <- as.numeric(substring(K, 4, nchar(K)-20))
+		if (instruct == TRUE) {
+			K <- x[c(grep("Population number assumed=", as.character(x), perl = TRUE))]
+			K <- as.numeric(substring(K, 31, nchar(K)))}
+		else {
+			K <- x[c(grep("populations assumed", as.character(x), perl = TRUE))]
+			K <- as.numeric(substring(K, 4, nchar(K)-20))}
 		if (K > maxK) {maxK <- K}
 	}
 	data <- "NULL"
 	for (i in files) {
 		lin <- paste(filepath, i, sep = "")
 		x <- readLines(lin)
-		K <- x[c(grep("populations assumed", as.character(x), perl = TRUE))]
-		lnPD <- x[c(grep("Estimated Ln Prob of Data", as.character(x), perl = TRUE))]
-		K <- as.numeric(substring(K, 4, nchar(K)-20))
+		if (instruct == TRUE) {
+			K <- x[c(grep("Population number assumed=", as.character(x), perl = TRUE))]
+			lnPD <- x[c(grep("Posterior Mean = ", as.character(x), perl = TRUE))]
+			K <- as.numeric(substring(K, 31, nchar(K)))}
+		else {
+			K <- x[c(grep("populations assumed", as.character(x), perl = TRUE))]
+			lnPD <- x[c(grep("Estimated Ln Prob of Data", as.character(x), perl = TRUE))]
+			K <- as.numeric(substring(K, 4, nchar(K)-20))}
 		Fsts <- c()
 		for (j in 1:K) {
 			line <- paste("Mean value of Fst_", as.character(j), " ", sep = "")
@@ -48,12 +57,15 @@ read.struct <- function(filepath = "./") {
 			Fst <- as.numeric(substring(Fst, nchar(Fst)-6, nchar(Fst)))
 			Fsts <- c(Fsts, Fst)
 		}
-		if (K < maxK) {
-			for (l in 1:(maxK-K)) {
+		if (length(Fsts) < maxK) {
+			for (l in 1:(maxK-length(Fsts))) {
 				Fsts <- c(Fsts, NA)
 			}
 		}
-		lnPD <- as.numeric(substring(lnPD, 31, 37))
+		if (instruct == TRUE) {
+			lnPD <-as.numeric(substring(lnPD, 22, 31))}
+		else {
+			lnPD <- as.numeric(substring(lnPD, 31, 37))}
 		dat <- matrix(c(K, lnPD, Fsts), ncol = (maxK + 2),byrow = TRUE)
 		if (is(data, "character")) {data <- dat} else {data <- rbind(data, dat)}
 	}
@@ -66,15 +78,19 @@ read.struct <- function(filepath = "./") {
 	data <- data[order(data$K),]
 	return(data)
 }
-corr.Qmatrix <- function(filepath  = "./", rowncol = TRUE, avmax = TRUE, pvalue = FALSE, raw = TRUE, r = 0.99, p = 0.05) {
+corr.Qmatrix <- function(filepath  = "./", instruct = FALSE, rowncol = TRUE, avmax = TRUE, pvalue = FALSE, raw = TRUE, r = 0.99, p = 0.05) {
 	options(warn = -9)
 	files <- list.files(path = filepath, pattern = "_f$")
 	maxK <- 1
 	for (i in files) {
 		lin <- paste(filepath, i, sep = "")
 		x <- readLines(lin)
-		K <- x[c(grep("populations assumed", as.character(x), perl = TRUE))]
-		K <- as.numeric(substring(K, 4, nchar(K)-20))
+		if (instruct == TRUE) {
+			K <- x[c(grep("Population number assumed=", as.character(x), perl = TRUE))]
+			K <- as.numeric(substring(K, 31, nchar(K)))}
+		else {
+			K <- x[c(grep("populations assumed", as.character(x), perl = TRUE))]
+			K <- as.numeric(substring(K, 4, nchar(K)-20))}
 		if (K > maxK) {maxK <- K}
 	}
 	Qmatrices <- "NULL"
@@ -84,8 +100,12 @@ corr.Qmatrix <- function(filepath  = "./", rowncol = TRUE, avmax = TRUE, pvalue 
 		for (i in files) {
 			lin <- paste(filepath, i, sep = "")
 			x <- readLines(lin)
-			K <- x[c(grep("populations assumed", as.character(x), perl = TRUE))]
-			K <- as.numeric(substring(K, 4, nchar(K)-20))
+			if (instruct == TRUE) {
+				K <- x[c(grep("Population number assumed=", as.character(x), perl = TRUE))]
+				K <- as.numeric(substring(K, 31, nchar(K)))}
+			else {
+				K <- x[c(grep("populations assumed", as.character(x), perl = TRUE))]
+				K <- as.numeric(substring(K, 4, nchar(K)-20))}
 			if (j == K) {Kfiles <- c(Kfiles, lin)}
 		}
 		NoColK[j] <- length(Kfiles)
@@ -94,12 +114,14 @@ corr.Qmatrix <- function(filepath  = "./", rowncol = TRUE, avmax = TRUE, pvalue 
 			x <- readLines(i)
 			Qmat <- x[c(grep(" : ", as.character(x), perl = TRUE))]
 			Qmat <- Qmat[c(grep("cluster", as.character(Qmat), invert = TRUE, perl = TRUE))]
+			Qmat <- Qmat[c(grep("Cluster", as.character(Qmat), invert = TRUE, perl = TRUE))]
 			Qmat <- Qmat[c(grep("Locus", as.character(Qmat), invert = TRUE, perl = TRUE))]
+			Qmat <- gsub("inf", "0.000", Qmat, perl = TRUE)
 			for (l in 1:j) {
-				beg <- nchar(Qmat)-6
-				Qmat2 <- as.numeric(substring(Qmat, beg, beg+5))
-				Qmat <- substring(Qmat, 1, beg)
-				Qmatrix <- c(Qmatrix, Qmat2)	
+				if (instruct == TRUE && l == 1) {beg <-nchar(Qmat)-4} else {beg <- nchar(Qmat)-5}
+				Qmat2 <- as.numeric(substring(Qmat, beg, beg+4))
+				Qmat <- substring(Qmat, 1, beg - 1)
+				Qmatrix <- c(Qmat2, Qmatrix)
 			}
 			Qmatrix <- matrix(Qmatrix, nrow = j, byrow = TRUE)
 			Qmatrix <- t(Qmatrix)
@@ -248,13 +270,14 @@ summarise.Fst <- function(input, stdevopt = 1) {
 		if (stdevopt == 2) {
 			for (kc in 1:nrow(tmp)){
 				tmp2 <- t(tmp[kc,1:ncol(tmp)])
-				tmp2 <- tmp2[order(tmp2[1,])]
-				tmp[kc] <- tmp2
+				tmp2 <- t(tmp2[order(tmp2[1,])])
+				tmp[kc, 1:ncol(tmp2)] <- tmp2
 			}
 		}
 		if (stdevopt == 3 && i > 1) {
 			options(warn = -9)
 			files <- list.files(path = filepath, pattern = "_f$")
+			Qref <- "NULL"
 			Qmatrices <- "NULL"
 			Kfiles <- c()
 			for (fil in files) {
@@ -271,23 +294,34 @@ summarise.Fst <- function(input, stdevopt = 1) {
 				Qmat <- Qmat[c(grep("cluster", as.character(Qmat), invert = TRUE, perl = TRUE))]
 				Qmat <- Qmat[c(grep("Locus", as.character(Qmat), invert = TRUE, perl = TRUE))]
 				for (l in 1:i) {
-					beg <- nchar(Qmat)-6
-					Qmat2 <- as.numeric(substring(Qmat, beg, beg+5))
-					Qmat <- substring(Qmat, 1, beg)
-					Qmatrix <- c(Qmatrix, Qmat2)	
+					beg <- nchar(Qmat)-5
+					Qmat2 <- as.numeric(substring(Qmat, beg, beg+4))
+					Qmat <- substring(Qmat, 1, beg-1)
+					Qmatrix <- c(Qmat2, Qmatrix)	
 				}
+				
 				Qmatrix <- matrix(Qmatrix, nrow = i, byrow = TRUE)
 				Qmatrix <- t(Qmatrix)
-				if (is(Qmatrices, "character")) {Qmatrices <- Qmatrix} else {Qmatrices <- cbind(Qmatrices, Qmatrix)}
+				if (is(Qmatrices, "character") && is(Qref, "character")) {Qref <- Qmatrix}
+					else if (is(Qmatrices, "character")) {Qmatrices <- Qmatrix} else {Qmatrices <- cbind(Qmatrices, Qmatrix)}
 			}
-			Qmatrices <- data.frame(Qmatrices)
-			corr <- cor(Qmatrices[,1:ncol(Qmatrices)], Qmatrices[,1:ncol(Qmatrices)])
+			xb <- 0
 			for (jy in 2:length(Kfiles)) {
-				xa <- (jy-1)*i +1
-				xb <- jy*i
-				rmat <- matrix(corr[1,xa:xb], ncol = i, byrow = TRUE)
-				tmp2 <- tmp[jy,]
-				tmp2 <- tmp2[order(rmat[1,]*-1)]
+				xa <- xb +1
+				xb <- xb + i
+				tmp2 <- c()
+				rmat <- cor(Qref, Qmatrices[,xa:xb])
+				for (ord in 1:i){
+					rv <- -1.0
+					sp <- 1
+					for (a in 1:i) {
+						if (rmat[ord,a] > rv) {
+							rv <- rmat[ord,a]
+							sp <- a}
+					}
+					tmp2 <- c(tmp2, tmp[jy,sp])
+					rmat[,sp] <- -2.0
+					}		
 				tmp[jy,] <- tmp2
 			}
 		}

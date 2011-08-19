@@ -11,7 +11,7 @@ Objects can be created by calls of the form \code{new("rowncolMatrix", ...)}.
 	\item{K}{A numeric listing the K value of the runs correlated}
 	\item{filterMatrix}{A table listing filtered Q matrix correlations by the row-and-column method}
 }}
-\author{Michael G. Campana <mgc32@cam.ac.uk>}
+\author{Michael G. Campana <mcampana63@gmail.com>}
 \seealso{
 	\code{\link{rowncolMatrix}}
 }

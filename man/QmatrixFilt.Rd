@@ -12,7 +12,7 @@ Objects can be created by calls of the form \code{new("QmatrixFilt", ...)}.
 	\item{avmaxcorr}{A table listing filtered Q matrix correlations by the rows-and-columns method}
 	\item{rawcorr}{A list listing raw Q matrix correlations}
 }}
-\author{Michael G. Campana <mgc32@cam.ac.uk>}
+\author{Michael G. Campana <mcampana63@gmail.com>}
 \seealso{
 	\code{\link{QmatrixFilt}}
 }
