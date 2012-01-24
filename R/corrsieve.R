@@ -363,8 +363,9 @@ summarise.Fst <- function(input, stdevopt = 1) {
 summarize.Fst <- function(input, stdevopt = 1) {return(summarise.Fst(input, stdevopt))}
 calc.delta <- function(input, Fst = FALSE) {
 	flag <- FALSE
+	j <- min(input$K)
 	for (i in min(input$K):(max(input$K)-1)) {
-		if (i+1 != input$K[i+1]) {flag <- TRUE}
+		if (i+1 != input$K[i-j+2]) {flag <- TRUE}
 	}
 	if (flag == TRUE) {print("Discontinuous data. Cannot process.")} else {
 		LprK <- c(NA)
