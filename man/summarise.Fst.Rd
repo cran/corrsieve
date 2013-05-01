@@ -14,7 +14,7 @@
 \author{Michael G. Campana <mcampana63@gmail.com>}
 \seealso{
 	\code{\link{read.struct}}
-	\code{link{calc.delta}}
+	\code{\link{calc.delta}}
 }
 \keyword{summarise}
 \keyword{summarize}

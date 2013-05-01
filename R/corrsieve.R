@@ -170,24 +170,33 @@ corr.Qmatrix <- function(filepath  = "./", instruct = FALSE, rowncol = TRUE, avm
 							if (i > 1) {
 								for (l in 1:i) {
 									for (m in 1:i) {
-										if (pv[l,m] > p) {rmat[l,m] <- 0}
+                                        if (is.na(pv[l,m])) {rmat[l,m] <- NA} else {
+                                            if (pv[l,m] > p) {rmat[l,m] <- 0}
+                                        }
 									}
 								}
 						}
 						} else {mat <- matrixCorr(K = i, Run1 = j, Run2 = k, CorrMatrix = rmat)}
 						rawmatrix <- c(rawmatrix, mat)
-						mx <- max(abs(rmat))
-						maxcorr <- c(maxcorr, mx)
+                        mx <- max(abs(rmat))
+                        maxcorr <- c(maxcorr, mx)
 						if (rowncol == TRUE) {
 							if (i == 1) {rowcolcorr <- c(rowcolcorr, "?")} else {
 								sig = TRUE
+                                corflag = FALSE
 								for (m in 1:i) {
-									if (max(abs(rmat[m,])) < r) {sig <- FALSE}
+                                    if (NA %in% rmat[m,]) {corflag <- TRUE} else {
+                                        if (max(abs(rmat[m,])) < r) {sig <- FALSE}
+                                    }
 								}
 								for (m in 1:i) {
-									if (max(abs(rmat[,m])) < r) {sig <- FALSE}
+                                    if (NA %in% rmat[,m]) {corflag <- TRUE} else {
+                                        if (max(abs(rmat[,m])) < r) {sig <- FALSE}
+                                    }
 								}
-								if (sig == TRUE) {rowcolcorr <- c(rowcolcorr, "Y")} else {rowcolcorr <- c(rowcolcorr, "N")}
+								if (corflag == TRUE) {rowcolcorr <-c(rowcolcorr, "?")} else {
+                                    if (sig == TRUE) {rowcolcorr <- c(rowcolcorr, "Y")} else {rowcolcorr <- c(rowcolcorr, "N")}
+                                }
 							}
 						}
 					}
@@ -218,7 +227,7 @@ corr.Qmatrix <- function(filepath  = "./", instruct = FALSE, rowncol = TRUE, avm
 		avmaxfilter <- c()
 		for (i in 1:maxK){
 			if (is.na(avmaxcorr[i]) == TRUE) 
-				{avmaxfilter <- c(avmaxfilter, NA)}
+				{avmaxfilter <- c(avmaxfilter, "?")}
 			else	
 				{if (avmaxcorr[i] < r) {avmaxfilter <- c(avmaxfilter, "N")} else {avmaxfilter <- c(avmaxfilter, "Y")}}			
 		}	
