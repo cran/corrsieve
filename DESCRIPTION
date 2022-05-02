@@ -1,16 +1,16 @@
 Package: corrsieve
-Version: 1.6-8
-Date: 2013/05/01
-Title: CorrSieve
-Author: Michael G. Campana <mcampana63@gmail.com>
-Maintainer: Michael G. Campana <mcampana63@gmail.com>
-Description: Statistical summary of Structure output.
+Version: 1.6-9
+Date: 2022-04-28
+Title: Software for Summarising and Evaluating STRUCTURE Output
+Author: Michael G. Campana <campanam@si.edu>
+Maintainer: Michael G. Campana <campanam@si.edu>
+Description: Statistical summary of STRUCTURE output. STRUCTURE is a K-means clustering method for inferring population structure and assigning individuals to populations using genetic data. Pritchard JK, Stephens M, Donnelly PJ (2000) <DOI:10.1093/genetics/155.2.945>. <https://web.stanford.edu/group/pritchardlab/structure.html>.
 License: GPL (>= 3)
-Depends: methods
-URL:
-        http://www.mcdonald.cam.ac.uk/projects/genetics/projects/CorrSieve/CorrSieve.htm
-BugReports: <mcampana63@gmail.com>
-Packaged: 2013-05-07 09:03:54 UTC; michaelcampana
+Depends: methods, stats
+URL: https://github.com/campanam/rCorrSieve
+BugReports: https://github.com/campanam/rCorrSieve
+Contact: <campanam@si.edu>
 NeedsCompilation: no
+Packaged: 2022-05-02 20:29:42 UTC; michaelcampana
 Repository: CRAN
-Date/Publication: 2013-05-07 12:53:35
+Date/Publication: 2022-05-02 22:52:30 UTC
